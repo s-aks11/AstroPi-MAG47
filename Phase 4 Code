@@ -1,1 +1,37 @@
+from PIL import Image
+import numpy as np
+import os
 
+def calculate_ndvi(red_band, nir_band):
+    """
+    Calculate the NDVI given the red and near-infrared bands.
+    """
+    ndvi = (nir_band - red_band) / (nir_band + red_band)
+    return ndvi
+
+# Folder path where the images are stored
+folder_path = 'images/'
+
+# Iterate over each image in the folder
+for filename in os.listdir(folder_path):
+    # Load the image
+    image_path = os.path.join(folder_path, filename)
+    image = Image.open(image_path)
+
+    # Convert the image to a NumPy array
+    image_array = np.array(image)
+
+    # Ensure the image array has three or more bands
+    if image_array.shape[2] >= 3:
+        # Extract the red and near-infrared bands
+        red_band = image_array[:, :, 0]
+        nir_band = image_array[:, :, 2]  # Modify this index if needed
+
+        # Calculate the NDVI values
+        ndvi_values = calculate_ndvi(red_band, nir_band)
+
+        # Print or process the NDVI values as desired
+        print("NDVI values for", filename)
+        print(ndvi_values)
+    else:
+        print("Image", filename, "does not have sufficient bands for NDVI calculation.")
